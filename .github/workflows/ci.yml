@@ -1,0 +1,45 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # 与本机环境一致：Debian trixie / KDE Frameworks 6.13
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - name: 安装编译依赖
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            git ca-certificates \
+            cmake g++ extra-cmake-modules \
+            libkf6texteditor-dev
+
+      - uses: actions/checkout@v4
+
+      - name: 配置与编译
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          cmake -B build -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_INSTALL_PREFIX=/usr \
+                -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
+          cmake --build build -j"$(nproc)"
+
+      - name: 打包产物
+        run: |
+          cd build
+          tar -czf katescratchmode-linux-amd64.tar.gz katescratchmode.so
+          sha256sum katescratchmode-linux-amd64.tar.gz > SHA256SUMS
+
+      - name: 上传产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: katescratchmode-linux-amd64
+          path: |
+            build/katescratchmode-linux-amd64.tar.gz
+            build/SHA256SUMS
+          if-no-files-found: error

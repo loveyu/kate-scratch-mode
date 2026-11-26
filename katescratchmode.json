@@ -1,0 +1,11 @@
+{
+    "KPlugin": {
+        "Id": "katescratchmode",
+        "Name": "Scratch Mode",
+        "Name[zh_CN]": "草稿自动高亮",
+        "Description": "Guess the language from pasted content for unsaved Plain Text documents and switch the highlighting mode automatically",
+        "Description[zh_CN]": "未保存的纯文本文档按内容自动猜测语言并切换高亮（粘贴草稿场景，不落盘也能有高亮和折叠）",
+        "Version": "0.1",
+        "License": "MIT"
+    }
+}
